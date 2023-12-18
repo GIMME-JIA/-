@@ -14,6 +14,8 @@ public class RedisIdWorker {
 
     private StringRedisTemplate redisTemplate;
 
+
+
     public RedisIdWorker(StringRedisTemplate redisTemplate) {
         this.redisTemplate = redisTemplate;
     }
@@ -43,7 +45,7 @@ public class RedisIdWorker {
         // 2.2 自增长
         Long count = redisTemplate.opsForValue().increment("icr:" + keyPrefix + ":" + date);
 
-        // 3、拼接返回
+        // 3、拼接返回：左移是把时间戳移到左边吗，或运算是把序列号放在右边
         return timeStamp << COUNT_BITS | count;
     }
 
