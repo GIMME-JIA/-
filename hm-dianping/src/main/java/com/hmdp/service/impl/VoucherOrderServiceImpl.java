@@ -8,8 +8,10 @@ import com.hmdp.service.ISeckillVoucherService;
 import com.hmdp.service.IVoucherOrderService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.hmdp.utils.RedisIdWorker;
+import com.hmdp.utils.SimpleRedisLock;
 import com.hmdp.utils.UserHolder;
 import org.springframework.aop.framework.AopContext;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -31,7 +33,7 @@ public class VoucherOrderServiceImpl extends ServiceImpl<VoucherOrderMapper, Vou
     private ISeckillVoucherService iSeckillVoucherService;
 
     @Resource
-    private IVoucherOrderService iVoucherOrderService;
+    private StringRedisTemplate stringRedisTemplate;
 
     @Resource
     private RedisIdWorker redisIdWorker;
@@ -58,19 +60,41 @@ public class VoucherOrderServiceImpl extends ServiceImpl<VoucherOrderMapper, Vou
 
 
         Long userId = UserHolder.getUser().getId();
-//        intern() 方法是字符串类 String 的一个方法。intern() 方法返回字符串对象的规范化表示形式，即返回字符串池中的唯一实例。
-        synchronized (userId.toString().intern()) {         // 使用每个用户的id作为锁，intern（）表示
+
+
+        // 1、创建锁对象
+        SimpleRedisLock simpleRedisLock = new SimpleRedisLock("order:" + userId, stringRedisTemplate);
+        // 2、获取锁
+        boolean isLock = simpleRedisLock.tryLock(1200);
+
+        // 3、判断获取状态
+        if (!isLock){
+            return Result.fail("一人只能下一单!");
+        }
+
+        // 4、处理业务
+        // 获取事务代理对象
+        try {
+            IVoucherOrderService proxy = (IVoucherOrderService) AopContext.currentProxy();
+            return proxy.createVoucherOrder(voucherId);
+        } finally {
+            simpleRedisLock.unlock();
+        }
+
+        // 这一块代码无法避免分布式环境下的并发安全问题,改为自定义redis的setnx锁来实现
+
+        //        intern() 方法是字符串类 String 的一个方法。intern() 方法返回字符串对象的规范化表示形式，即返回字符串池中的唯一实例。
+        /*synchronized (userId.toString().intern()) {         // 使用每个用户的id作为锁
             // 获取事务代理对象
             IVoucherOrderService proxy = (IVoucherOrderService) AopContext.currentProxy();
             return proxy.createVoucherOrder(voucherId);
-        }
+        }*/
     }
 
     @Transactional      // 多表操作添加事务
     public Result createVoucherOrder(Long voucherId) {     // 不在方法上加锁，这样锁的范围太大
         // 4、实现一人一单，如果用户已经买了，就不在保存该订单
         Long userId = UserHolder.getUser().getId();
-
 
         Integer count = query().eq("voucher_id", voucherId).eq("user_id", userId).count();
         if (count > 0) {

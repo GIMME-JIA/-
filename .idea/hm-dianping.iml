@@ -3,4 +3,18 @@
   <component name="AdditionalModuleElements">
     <content url="file://$MODULE_DIR$" />
   </component>
+  <component name="FacetManager">
+    <facet type="JRebel" name="JRebel">
+      <configuration>
+        <option name="ideModuleStorage">
+          <map>
+            <entry key="com.zeroturnaround.jrebel.FormatVersion" value="7.0.0" />
+            <entry key="jrebelEnabled" value="false" />
+            <entry key="rebelXmlGenerationInvariantToken" value="PGFwcGxpY2F0aW9uIGdlbmVyYXRlZC1ieT0iaW50ZWxsaWoiPjxpZD5obS1kaWFucGluZzwvaWQ+PGNsYXNzcGF0aD48ZGlyIG5hbWU9IkM6L0pJQV9HSU1NRS9XT1JLU1BBQ0UvaG0tZGlhbnBpbmcvaG0tZGlhbnBpbmcvdGFyZ2V0L2NsYXNzZXMiPjwvZGlyPjwvY2xhc3NwYXRoPjwvYXBwbGljYXRpb24+" />
+          </map>
+        </option>
+        <option name="version" value="6" />
+      </configuration>
+    </facet>
+  </component>
 </module>
