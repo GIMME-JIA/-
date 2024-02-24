@@ -12,6 +12,9 @@ import java.io.File;
 import java.io.IOException;
 import java.util.UUID;
 
+/**
+ * 图片上传
+ */
 @Slf4j
 @RestController
 @RequestMapping("upload")
