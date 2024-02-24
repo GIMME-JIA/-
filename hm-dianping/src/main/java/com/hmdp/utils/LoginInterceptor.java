@@ -20,6 +20,9 @@ import java.util.concurrent.TimeUnit;
 import static com.hmdp.utils.RedisConstants.LOGIN_TOKEN_KEY;
 import static com.hmdp.utils.RedisConstants.LOGIN_TOKEN_TTL;
 
+/**
+ * 登录拦截器
+ */
 public class LoginInterceptor implements HandlerInterceptor {
 
     /**

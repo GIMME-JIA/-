@@ -103,6 +103,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
         从redis中取出验证码
          */
         String value = stringRedisTemplate.opsForValue().get(LOGIN_CODE_KEY + phone);
+
         if(value == null || !code.equals(value)){
             return Result.fail(LOGIN_ERROR);
         }
@@ -122,9 +123,11 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
         // 1、以uuid生成token，作为key存到redis
         UUID token = UUID.randomUUID();
         String tokenKey = LOGIN_TOKEN_KEY + token;
+
         // 2、将用户数据封装成map
         Map<String, Object> userMap = BeanUtil.beanToMap(userDTO,new HashMap<>(),
                 CopyOptions.create().setIgnoreNullValue(true).setFieldValueEditor((fieldName,fieldValue)->fieldValue.toString()));
+
         // 3、存储到redis
         stringRedisTemplate.opsForHash().putAll(tokenKey,userMap);
         stringRedisTemplate.expire(tokenKey,30,TimeUnit.MINUTES);   // 给这个token设置三十分钟有效期
@@ -134,6 +137,11 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
         return Result.ok(String.valueOf(token));
     }
 
+    /**
+     * 通过手机号创建用户信息
+     * @param phone
+     * @return
+     */
     private User createUserWithPhone(String phone) {
 
         User user = new User();
