@@ -64,7 +64,7 @@ public class Shop implements Serializable {
     private Double x;
 
     /**
-     * 维度
+     * 纬度
      */
     private Double y;
 
