@@ -1,7 +1,8 @@
 package com.hmdp.utils;
 
 /**
- * 此处需要该地址
+ * 系统级常量类
+ * 此处需要改地址
  */
 public class SystemConstants {
     public static final String IMAGE_UPLOAD_DIR = "C:\\JIA_GIMME\\WORKSPACE\\hm-dianping\\nginx-1.18.0\\nginx-1.18.0\\html\\hmdp\\imgs";
